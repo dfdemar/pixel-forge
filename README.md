@@ -1,9 +1,6 @@
-# pixel-forge
-
-Retro Pixel-Art Sprite Generator
+# Retro Pixel-Art Sprite Generator
 
 **Version:** v0.2.1 (Similarity Guard Update)
-
 **Goal:** A modular, procedurally-driven generator for **NES/SNES-style** 2D sprites (planets, tiles, icons, characters, etc.) with a modern, responsive UI. The engine is **extensible** via pluggable sprite modules, and enforces a retro aesthetic (limited palettes, ordered dithering, crisp 1px outlines).
 
 ---
@@ -245,7 +242,7 @@ export type SpriteModule = {
 
 ## Implementation Status
 
-**Implemented** (v0.2.0):
+**Implemented** (v0.2.1):
 - ✅ React + TS + Vite app with alias `@engine/*`
 - ✅ Zustand store for UI state
 - ✅ Three modules: **planet**, **tile**, **icon**
@@ -254,6 +251,7 @@ export type SpriteModule = {
 - ✅ Ordered dithering (Bayer 4×4 / 8×8) with *transparency-aware* quantize/dither
 - ✅ 1px outline
 - ✅ Live preview & batch sheet, **Export PNG**, **Export/Import JSON**
+- ✅ **Similarity guard**: Edge histogram + palette usage analysis to reduce repetitive results in batch generation
 
 **In progress / next**:
 - **Palette micro-jitter** (pre-quantization) for subtle variety while staying on-palette
@@ -280,7 +278,7 @@ export type SpriteModule = {
 - ✅ Explicit “Generate N” count field (9/36/81 presets)
 
 ### Milestone 2 — Variation & Quality (in progress)
-- **Similarity guard**: collect edge histograms & palette signatures; auto-nudge params when too similar to recent outputs.
+- ✅ **Similarity guard**: collect edge histograms & palette signatures; auto-nudge params when too similar to recent outputs.
 - **Palette micro-jitter** (pre-quantization) for subtle variety while staying on-palette.
 - **Palette editor**: user-defined palettes with max colors cap.
 

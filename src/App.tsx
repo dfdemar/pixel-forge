@@ -70,6 +70,7 @@ export default function App(){
         quantizer: ui.quantizer,
         outline: ui.outline,
         params: ui.params,
+        useSimilarityGuard: true, // Enable similarity guard for batch generation
       })
       const ctx2d = canvas.getContext('2d')!
       ctx2d.imageSmoothingEnabled = false
