@@ -109,3 +109,5 @@ sprite-exports/
 # Backup files
 *.bak
 *.backup
+*.zip
+*.tar.gz

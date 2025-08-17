@@ -40,6 +40,8 @@ export default function App(){
       quantizer: ui.quantizer,
       outline: ui.outline,
       params: ui.params,
+      microJitter: ui.microJitter,
+      microJitterStrength: ui.microJitterStrength,
     })
     const ctx2d = canvas.getContext('2d')!
     ctx2d.imageSmoothingEnabled = false
@@ -71,6 +73,8 @@ export default function App(){
         outline: ui.outline,
         params: ui.params,
         useSimilarityGuard: true, // Enable similarity guard for batch generation
+        microJitter: ui.microJitter,
+        microJitterStrength: ui.microJitterStrength,
       })
       const ctx2d = canvas.getContext('2d')!
       ctx2d.imageSmoothingEnabled = false
@@ -195,6 +199,34 @@ export default function App(){
           <option value={1}>Thin (1px)</option>
           <option value={2} disabled>Thick (2px)</option>
         </select>
+
+        <div className="h1" style={{marginTop:12}}>Variation</div>
+        <label className="label">
+          <input
+            type="checkbox"
+            checked={ui.microJitter}
+            onChange={e=>useUI.setState({ microJitter: e.target.checked })}
+            style={{marginRight:8}}
+          />
+          Palette Micro-Jitter
+        </label>
+        {ui.microJitter && (
+          <>
+            <label className="label">Jitter Strength</label>
+            <input
+              className="input"
+              type="range"
+              min={0.05}
+              max={0.3}
+              step={0.05}
+              value={ui.microJitterStrength}
+              onChange={e=>useUI.setState({ microJitterStrength: parseFloat(e.target.value) })}
+            />
+            <div style={{fontSize:12, color:'var(--subtext)', marginTop:4}}>
+              {(ui.microJitterStrength * 100).toFixed(0)}% - Subtle color variation before quantization
+            </div>
+          </>
+        )}
       </div>
 
       <div className="main">

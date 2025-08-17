@@ -1,15 +1,23 @@
 import type { EngineContext } from './types'
-import { applyBayer, quantizeNearest } from './palette'
+import { applyBayer, quantizeNearest, applyPaletteMicroJitter } from './palette'
 import { argb } from './pixelCanvas'
 
 export function enforceRetro(ctx: EngineContext){
-  // Quantize to palette first
+  // Apply palette micro-jitter before quantization for subtle variation
+  if(ctx.retro.microJitter) {
+    const strength = ctx.retro.microJitterStrength ?? 0.15;
+    applyPaletteMicroJitter(ctx.canvas.data, ctx.palette, ctx.rng.split('microJitter'), strength);
+  }
+
+  // Quantize to palette
   if(ctx.quantizer === 'nearest') quantizeNearest(ctx.palette, ctx.canvas.data)
+
   // Dither (ordered) on non-transparent pixels only
   if(ctx.dither !== 'none'){
     const size = ctx.dither==='bayer4'?4:8;
     applyBayer(ctx.canvas.data, ctx.canvas.w, ctx.canvas.h, ctx.palette, size)
   }
+
   // Simple 1px outer outline (around alpha edges)
   if(ctx.retro.outlineWidth>0){
     const {w,h,data} = ctx.canvas

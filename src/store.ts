@@ -11,6 +11,8 @@ export type UIState = {
   seed: number;
   params: Record<string, any>;
   sheet: HTMLCanvasElement[];
+  microJitter: boolean;
+  microJitterStrength: number;
   set: (p: Partial<UIState>)=>void;
 }
 
@@ -25,5 +27,7 @@ export const useUI = create<UIState>((set)=>({
   seed:150979693,
   params:{},
   sheet:[],
+  microJitter: true,
+  microJitterStrength: 0.15,
   set: (p)=>set(p),
 }))

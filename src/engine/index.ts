@@ -16,6 +16,8 @@ export type EngineParams = {
   outline: 0|1|2;
   params: Record<string, any>;
   useSimilarityGuard?: boolean;
+  microJitter?: boolean;
+  microJitterStrength?: number;
 }
 
 export function runModule(mod: SpriteModule, opts: EngineParams){
@@ -37,7 +39,11 @@ export function runModule(mod: SpriteModule, opts: EngineParams){
         palette,
         dither: opts.dither,
         quantizer: opts.quantizer,
-        retro: { outlineWidth: opts.outline },
+        retro: {
+          outlineWidth: opts.outline,
+          microJitter: opts.microJitter,
+          microJitterStrength: opts.microJitterStrength
+        },
         timeBudgetMs: 16
       }
 
@@ -68,7 +74,11 @@ export function runModule(mod: SpriteModule, opts: EngineParams){
     palette,
     dither: opts.dither,
     quantizer: opts.quantizer,
-    retro: { outlineWidth: opts.outline },
+    retro: {
+      outlineWidth: opts.outline,
+      microJitter: opts.microJitter,
+      microJitterStrength: opts.microJitterStrength
+    },
     timeBudgetMs: 16
   }
 
