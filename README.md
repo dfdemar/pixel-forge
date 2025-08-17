@@ -1,6 +1,6 @@
 # pixel-forge
 
-**Version:** v0.2.3 (Palette Editor Complete)
+**Version:** v0.2.2 (Micro-Jitter Complete)
 
 A modular, procedurally-driven generator for **NES/SNES-style** 2D sprites (planets, tiles, icons, characters, etc.) with a modern, responsive UI. The engine is **extensible** via pluggable sprite modules, and enforces a retro aesthetic (limited palettes, ordered dithering, crisp 1px outlines).
 
