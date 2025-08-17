@@ -1,9 +1,7 @@
-# pixel-forge
+# Retro Pixel-Art Sprite Generator
 
-Retro Pixel Art Sprite Generator
-
-- **Version:** v0.2.1 (Similarity Guard Update)
-- **Goal:** A modular, procedurally-driven generator for **NES/SNES-style** 2D sprites (planets, tiles, icons, characters, etc.) with a modern, responsive UI. The engine is **extensible** via pluggable sprite modules, and enforces a retro aesthetic (limited palettes, ordered dithering, crisp 1px outlines).
+**Version:** v0.2.1 (Similarity Guard Update)
+**Goal:** A modular, procedurally-driven generator for **NES/SNES-style** 2D sprites (planets, tiles, icons, characters, etc.) with a modern, responsive UI. The engine is **extensible** via pluggable sprite modules, and enforces a retro aesthetic (limited palettes, ordered dithering, crisp 1px outlines).
 
 ---
 
@@ -281,7 +279,7 @@ export type SpriteModule = {
 
 ### Milestone 2 — Variation & Quality (in progress)
 - ✅ **Similarity guard**: collect edge histograms & palette signatures; auto-nudge params when too similar to recent outputs.
-- **Palette micro-jitter** (pre-quantization) for subtle variety while staying on-palette.
+- ✅ **Palette micro-jitter** (pre-quantization) for subtle variety while staying on-palette.
 - **Palette editor**: user-defined palettes with max colors cap.
 
 ### Milestone 3 — Engine Op Graph

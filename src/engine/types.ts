@@ -15,6 +15,8 @@ export type Quantizer = 'none' | 'nearest';
 
 export type RetroPolicy = {
   outlineWidth: 0 | 1 | 2;
+  microJitter?: boolean;
+  microJitterStrength?: number;
 };
 
 export type PixelCanvas = {

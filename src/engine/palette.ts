@@ -1,4 +1,4 @@
-import type { Palette } from './types'
+import type { Palette, RNG } from './types'
 
 const NES_13 = new Uint32Array([
   0xff000000, 0xff1d2b53, 0xff7e2553, 0xff008751,
@@ -48,6 +48,58 @@ export function quantizeNearest(p: Palette, src: Uint32Array){
     const idx = nearestColorIndex(p, argb);
     const rgb = p.colors[idx]>>>0;
     src[i] = ((a&255)<<24) | (rgb & 0x00ffffff);
+  }
+}
+
+/**
+ * Apply palette micro-jitter for subtle variation before quantization
+ * Shifts colors slightly within the palette space to create more natural gradients
+ */
+export function applyPaletteMicroJitter(src: Uint32Array, p: Palette, rng: RNG, strength: number = 0.15) {
+  for (let i = 0; i < src.length; i++) {
+    const argb = src[i] >>> 0;
+    const a = (argb >>> 24) & 0xff;
+    if (a === 0) continue; // Skip transparent pixels
+
+    const r = (argb >>> 16) & 0xff;
+    const g = (argb >>> 8) & 0xff;
+    const b = argb & 0xff;
+
+    // Find the nearest palette color
+    const nearestIdx = nearestColorIndex(p, argb);
+    const nearestColor = p.colors[nearestIdx] >>> 0;
+    const nearestR = (nearestColor >>> 16) & 0xff;
+    const nearestG = (nearestColor >>> 8) & 0xff;
+    const nearestB = nearestColor & 0xff;
+
+    // Find the second nearest color for jitter direction
+    let secondNearestIdx = 0;
+    let secondBestDist = Infinity;
+    for (let j = 0; j < p.colors.length; j++) {
+      if (j === nearestIdx) continue;
+      const c = p.colors[j] >>> 0;
+      const cr = (c >>> 16) & 0xff;
+      const cg = (c >>> 8) & 0xff;
+      const cb = c & 0xff;
+      const dist = (r - cr) * (r - cr) + (g - cg) * (g - cg) + (b - cb) * (b - cb);
+      if (dist < secondBestDist) {
+        secondBestDist = dist;
+        secondNearestIdx = j;
+      }
+    }
+
+    const secondColor = p.colors[secondNearestIdx] >>> 0;
+    const secondR = (secondColor >>> 16) & 0xff;
+    const secondG = (secondColor >>> 8) & 0xff;
+    const secondB = secondColor & 0xff;
+
+    // Apply micro-jitter towards the second nearest color
+    const jitterAmount = (rng.nextFloat() - 0.5) * strength;
+    const newR = Math.max(0, Math.min(255, nearestR + (secondR - nearestR) * jitterAmount));
+    const newG = Math.max(0, Math.min(255, nearestG + (secondG - nearestG) * jitterAmount));
+    const newB = Math.max(0, Math.min(255, nearestB + (secondB - nearestB) * jitterAmount));
+
+    src[i] = ((a & 0xff) << 24) | ((newR & 0xff) << 16) | ((newG & 0xff) << 8) | (newB & 0xff);
   }
 }
 
