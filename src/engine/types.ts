@@ -2,30 +2,30 @@ export type RNG = {
   nextFloat(): number;
   nextInt(n: number): number;
   split(label?: string): RNG;
-}
+};
 
 export type Palette = {
   name: string;
-  colors: Uint32Array;
+  colors: Uint32Array; // ARGB
   maxColors: number;
-}
+};
 
 export type DitherMode = 'none' | 'bayer4' | 'bayer8';
 export type Quantizer = 'none' | 'nearest';
 
 export type RetroPolicy = {
   outlineWidth: 0 | 1 | 2;
-}
+};
 
 export type PixelCanvas = {
   w: number; h: number;
   data: Uint32Array; // ARGB
   clear(argb: number): void;
-  set(x:number,y:number,argb:number): void;
-  get(x:number,y:number): number;
+  set(x: number, y: number, argb: number): void;
+  get(x: number, y: number): number;
   blit(src: PixelCanvas, dx: number, dy: number): void;
   toImageData(): ImageData;
-}
+};
 
 export type EngineContext = {
   canvas: PixelCanvas;
@@ -35,16 +35,16 @@ export type EngineContext = {
   quantizer: Quantizer;
   retro: RetroPolicy;
   timeBudgetMs: number;
-}
+};
 
 export type ModuleParam = {
   key: string;
-  type: 'range'|'enum'|'int'|'bool'|'seed';
+  type: 'range' | 'enum' | 'int' | 'bool' | 'seed';
   label: string;
   min?: number; max?: number; step?: number;
   options?: string[];
   default: any;
-}
+};
 
 export type SpriteModule = {
   id: string;
@@ -58,6 +58,21 @@ export type SpriteModule = {
     tileable: boolean;
     preferredPalettes?: string[];
   };
-  generate(ctx: EngineContext, params: Record<string,any>): void;
-  finalize?(ctx: EngineContext, params: Record<string,any>): void;
-}
+  generate(ctx: EngineContext, params: Record<string, any>): void;
+  finalize?(ctx: EngineContext, params: Record<string, any>): void;
+};
+
+// New types for similarity guard
+export type SpriteSignature = {
+  edgeHistogram: number[];
+  paletteUsage: number[];
+  timestamp: number;
+  params: Record<string, any>;
+};
+
+export type SimilarityGuardConfig = {
+  maxHistory: number;
+  edgeThreshold: number;
+  paletteThreshold: number;
+  maxRetries: number;
+};
