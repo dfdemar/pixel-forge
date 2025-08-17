@@ -243,7 +243,7 @@ export type SpriteModule = {
 
 ## Implementation Status
 
-**Implemented** (v0.2.3):
+**Implemented** (v0.2.2):
 - ✅ React + TS + Vite app with alias `@engine/*`
 - ✅ Zustand store for UI state
 - ✅ Three modules: **planet**, **tile**, **icon**
