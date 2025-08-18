@@ -77,14 +77,56 @@ export function exportCustomPalettes(): string {
 export function importCustomPalettes(jsonString: string): boolean {
   try {
     const imported = JSON.parse(jsonString);
+    let importedCount = 0;
+
     for (const [id, palette] of Object.entries(imported)) {
-      if (isValidPalette(palette)) {
-        customPalettes[id] = palette as Palette;
-        Palettes[id] = palette as Palette;
+      if (palette && typeof palette === 'object') {
+        const paletteObj = palette as any;
+
+        // Ensure required properties exist
+        if (!paletteObj.name || !paletteObj.colors || typeof paletteObj.maxColors !== 'number') {
+          continue;
+        }
+
+        // Convert colors back to Uint32Array - handle different formats
+        let colorsArray: Uint32Array;
+        if (Array.isArray(paletteObj.colors)) {
+          // Direct array format
+          colorsArray = new Uint32Array(paletteObj.colors);
+        } else if (paletteObj.colors instanceof Uint32Array) {
+          // Already a Uint32Array
+          colorsArray = paletteObj.colors;
+        } else if (typeof paletteObj.colors === 'object' && paletteObj.colors !== null) {
+          // Object with numeric keys (JSON serialized Uint32Array)
+          const keys = Object.keys(paletteObj.colors)
+            .map(k => parseInt(k))
+            .filter(k => !isNaN(k))
+            .sort((a, b) => a - b);
+          const values = keys.map(k => paletteObj.colors[k]);
+          colorsArray = new Uint32Array(values);
+        } else {
+          continue; // Skip invalid colors format
+        }
+
+        // Create the palette object
+        const validPalette: Palette = {
+          name: paletteObj.name,
+          colors: colorsArray,
+          maxColors: paletteObj.maxColors
+        };
+
+        // Validate the reconstructed palette
+        if (validPalette.colors.length > 0 && validPalette.maxColors > 0) {
+          customPalettes[id] = validPalette;
+          Palettes[id] = validPalette;
+          importedCount++;
+        }
       }
     }
-    return true;
-  } catch {
+
+    return importedCount > 0;
+  } catch (error) {
+    console.error('Error importing palettes:', error);
     return false;
   }
 }
@@ -96,7 +138,9 @@ function isValidPalette(obj: any): obj is Palette {
   return obj &&
     typeof obj.name === 'string' &&
     obj.colors instanceof Uint32Array &&
-    typeof obj.maxColors === 'number';
+    typeof obj.maxColors === 'number' &&
+    obj.colors.length > 0 &&
+    obj.maxColors > 0;
 }
 
 export function nearestColorIndex(p: Palette, argb: number): number {
