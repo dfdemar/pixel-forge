@@ -1,8 +1,7 @@
-# pixel-forge
+# Retro Pixel-Art Sprite Generator
 
-**Version:** v0.2.2 (Micro-Jitter Complete)
-
-A modular, procedurally-driven generator for **NES/SNES-style** 2D sprites (planets, tiles, icons, characters, etc.) with a modern, responsive UI. The engine is **extensible** via pluggable sprite modules, and enforces a retro aesthetic (limited palettes, ordered dithering, crisp 1px outlines).
+**Version:** v0.2.3 (Palette Editor Complete)
+**Goal:** A modular, procedurally-driven generator for **NES/SNES-style** 2D sprites (planets, tiles, icons, characters, etc.) with a modern, responsive UI. The engine is **extensible** via pluggable sprite modules, and enforces a retro aesthetic (limited palettes, ordered dithering, crisp 1px outlines).
 
 ---
 
@@ -243,7 +242,7 @@ export type SpriteModule = {
 
 ## Implementation Status
 
-**Implemented** (v0.2.2):
+**Implemented** (v0.2.3):
 - ✅ React + TS + Vite app with alias `@engine/*`
 - ✅ Zustand store for UI state
 - ✅ Three modules: **planet**, **tile**, **icon**
@@ -254,20 +253,12 @@ export type SpriteModule = {
 - ✅ Live preview & batch sheet, **Export PNG**, **Export/Import JSON**
 - ✅ **Similarity guard**: Edge histogram + palette usage analysis to reduce repetitive results in batch generation
 - ✅ **Palette micro-jitter**: Pre-quantization color variation for more natural gradients
+- ✅ **Palette editor**: Complete custom palette creation system with visual editor, image import, and JSON export/import
 
-**In progress / next**:
-- **Palette micro-jitter** (pre-quantization) for subtle variety while staying on-palette
-- **Palette editor**: user-defined palettes with max colors cap
+**Next up** (Milestone 3):
 - Modular op-graph executor (`RenderPlan`) in addition to direct draw mode
-
-**Planned** (roadmap below):
-- Character module with socketed equipment
-- Space station / greeble grammar
-- WFC tile motifs & connectivity constraints
-- Animation frame support & onion skin preview
-- Web Worker off-thread generation
-- Blue-noise dithering, Wu/median-cut quantization
-- Plugin registry & module marketplace
+- Layering and blend modes for complex sprite generation
+- Enhanced retro effects and post-processing options
 
 ---
 
@@ -279,10 +270,10 @@ export type SpriteModule = {
 - ✅ Checkerboard preview background toggle
 - ✅ Explicit “Generate N” count field (9/36/81 presets)
 
-### Milestone 2 — Variation & Quality (in progress)
+### Milestone 2 — Variation & Quality (COMPLETE ✅)
 - ✅ **Similarity guard**: collect edge histograms & palette signatures; auto-nudge params when too similar to recent outputs.
 - ✅ **Palette micro-jitter** (pre-quantization) for subtle variety while staying on-palette.
-- **Palette editor**: user-defined palettes with max colors cap.
+- ✅ **Palette editor**: user-defined palettes with max colors cap.
 
 ### Milestone 3 — Engine Op Graph
 - Introduce a `RenderPlan` with **ops** (fill, poly, circle, stamp, noiseFill, outline, dither) executed by the engine.

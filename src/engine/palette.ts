@@ -28,6 +28,77 @@ export const Palettes: Record<string, Palette> = {
   GB_4: { name: 'GB_4', colors: GB_4, maxColors: 4 },
 };
 
+// Custom palette storage
+let customPalettes: Record<string, Palette> = {};
+
+/**
+ * Add a custom palette to the system
+ */
+export function addCustomPalette(palette: Palette): void {
+  const safeId = palette.name.replace(/[^a-zA-Z0-9_]/g, '_');
+  customPalettes[safeId] = palette;
+  Palettes[safeId] = palette;
+}
+
+/**
+ * Remove a custom palette from the system
+ */
+export function removeCustomPalette(paletteId: string): void {
+  if (customPalettes[paletteId]) {
+    delete customPalettes[paletteId];
+    delete Palettes[paletteId];
+  }
+}
+
+/**
+ * Get all available palettes (built-in + custom)
+ */
+export function getAllPalettes(): Record<string, Palette> {
+  return { ...Palettes };
+}
+
+/**
+ * Get only custom palettes
+ */
+export function getCustomPalettes(): Record<string, Palette> {
+  return { ...customPalettes };
+}
+
+/**
+ * Export custom palettes as JSON
+ */
+export function exportCustomPalettes(): string {
+  return JSON.stringify(customPalettes, null, 2);
+}
+
+/**
+ * Import custom palettes from JSON
+ */
+export function importCustomPalettes(jsonString: string): boolean {
+  try {
+    const imported = JSON.parse(jsonString);
+    for (const [id, palette] of Object.entries(imported)) {
+      if (isValidPalette(palette)) {
+        customPalettes[id] = palette as Palette;
+        Palettes[id] = palette as Palette;
+      }
+    }
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * Validate palette structure
+ */
+function isValidPalette(obj: any): obj is Palette {
+  return obj &&
+    typeof obj.name === 'string' &&
+    obj.colors instanceof Uint32Array &&
+    typeof obj.maxColors === 'number';
+}
+
 export function nearestColorIndex(p: Palette, argb: number): number {
   const r=(argb>>>16)&255, g=(argb>>>8)&255, b=argb&255;
   let best=0, bestD=1e9;

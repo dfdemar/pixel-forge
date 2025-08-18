@@ -3,7 +3,7 @@ import { create } from 'zustand'
 export type UIState = {
   spriteType: 'planet'|'tile'|'icon';
   archetype: string;
-  palette: 'NES_13'|'SNES_32'|'GB_4';
+  palette: string; // Changed to string to support custom palette IDs
   dither: 'none'|'bayer4'|'bayer8';
   quantizer: 'none'|'nearest';
   outline: 0|1|2;
@@ -13,6 +13,8 @@ export type UIState = {
   sheet: HTMLCanvasElement[];
   microJitter: boolean;
   microJitterStrength: number;
+  showPaletteEditor: boolean;
+  editingPalette?: string; // ID of palette being edited, if any
   set: (p: Partial<UIState>)=>void;
 }
 
@@ -29,5 +31,7 @@ export const useUI = create<UIState>((set)=>({
   sheet:[],
   microJitter: true,
   microJitterStrength: 0.15,
+  showPaletteEditor: false,
+  editingPalette: undefined,
   set: (p)=>set(p),
 }))

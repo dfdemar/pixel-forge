@@ -2,6 +2,9 @@ import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { useUI } from './store'
 import { getModules, getModuleById } from '@engine/registry'
 import { runModule } from '@engine/index'
+import { PaletteEditor } from './components/PaletteEditor'
+import { getAllPalettes, addCustomPalette, removeCustomPalette, getCustomPalettes, exportCustomPalettes, importCustomPalettes } from '@engine/palette'
+import type { Palette } from '@engine/types'
 
 function downloadBlob(name: string, blob: Blob){
   const a = document.createElement('a')
@@ -21,11 +24,35 @@ export default function App(){
   const ui = useUI()
   const [modules] = useState(()=>getModules())
   const [currentCanvas, setCurrentCanvas] = useState<HTMLCanvasElement|null>(null)
+  const [availablePalettes, setAvailablePalettes] = useState(()=>getAllPalettes())
   const previewRef = useRef<HTMLCanvasElement>(null)
 
   const mod = useMemo(()=>getModuleById(ui.spriteType)!, [ui.spriteType])
 
   useEffect(()=>{ generateOne() }, [])
+
+  // Palette management functions
+  function handleSavePalette(palette: Palette) {
+    addCustomPalette(palette);
+    setAvailablePalettes(getAllPalettes());
+    useUI.setState({ palette: palette.name.replace(/[^a-zA-Z0-9_]/g, '_') });
+    setTimeout(generateOne, 0);
+  }
+
+  function handleDeletePalette(paletteId: string) {
+    if (paletteId === 'NES_13' || paletteId === 'SNES_32' || paletteId === 'GB_4') {
+      alert('Cannot delete built-in palettes');
+      return;
+    }
+    if (confirm('Delete this custom palette?')) {
+      removeCustomPalette(paletteId);
+      setAvailablePalettes(getAllPalettes());
+      if (ui.palette === paletteId) {
+        useUI.setState({ palette: 'SNES_32' });
+        setTimeout(generateOne, 0);
+      }
+    }
+  }
 
   async function generateOne(){
     const canvas = document.createElement('canvas')
@@ -142,6 +169,32 @@ export default function App(){
     reader.readAsText(f)
   }
 
+  // Palette export/import handlers
+  function exportPalettes() {
+    const json = exportCustomPalettes();
+    downloadBlob('custom-palettes.json', new Blob([json], { type: 'application/json' }));
+  }
+
+  function importPalettes(ev: React.ChangeEvent<HTMLInputElement>) {
+    const f = ev.target.files?.[0];
+    if (!f) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      try {
+        const success = importCustomPalettes(String(reader.result));
+        if (success) {
+          setAvailablePalettes(getAllPalettes());
+          alert('Palettes imported successfully!');
+        } else {
+          alert('Invalid palette file');
+        }
+      } catch {
+        alert('Error importing palettes');
+      }
+    };
+    reader.readAsText(f);
+  }
+
   return (
     <div className="app">
       <div className="top">
@@ -154,6 +207,11 @@ export default function App(){
           Import JSON
           <input type="file" accept="application/json" style={{ display:'none' }} onChange={importSettings}/>
         </label>
+        <label className="button small">
+          Import Palettes
+          <input type="file" accept="application/json" style={{ display:'none' }} onChange={importPalettes}/>
+        </label>
+        <button className="button small" onClick={exportPalettes}>Export Palettes</button>
       </div>
 
       <div className="left">
@@ -177,11 +235,31 @@ export default function App(){
 
         <div className="h1" style={{marginTop:12}}>Style</div>
         <label className="label">Palette</label>
-        <select value={ui.palette} onChange={e=>useUI.setState({ palette: e.target.value as any })}>
-          <option value="NES_13">NES (13)</option>
-          <option value="SNES_32">SNES (32)</option>
-          <option value="GB_4">GB (4)</option>
-        </select>
+        <div style={{display:'flex', gap:4, alignItems:'center', marginBottom:8}}>
+          <select value={ui.palette} onChange={e=>useUI.setState({ palette: e.target.value })} style={{flex:1}}>
+            {Object.entries(availablePalettes).map(([id, palette]) => (
+              <option key={id} value={id}>
+                {palette.name} ({palette.colors.length})
+              </option>
+            ))}
+          </select>
+          <button
+            className="button small"
+            onClick={() => useUI.setState({ showPaletteEditor: true, editingPalette: undefined })}
+            style={{minWidth:'auto', padding:'4px 8px'}}
+          >
+            +
+          </button>
+          {ui.palette !== 'NES_13' && ui.palette !== 'SNES_32' && ui.palette !== 'GB_4' && (
+            <button
+              className="button small"
+              onClick={() => handleDeletePalette(ui.palette)}
+              style={{minWidth:'auto', padding:'4px 8px', backgroundColor:'#c44'}}
+            >
+              ×
+            </button>
+          )}
+        </div>
         <label className="label">Dither</label>
         <select value={ui.dither} onChange={e=>useUI.setState({ dither: e.target.value as any })}>
           <option value="none">None</option>
@@ -249,8 +327,16 @@ export default function App(){
         <div className="label" style={{marginTop:8}}>Palette</div>
         <div className="badge">{ui.palette}</div>
         <div className="label" style={{marginTop:8}}>Tip</div>
-        <div style={{fontSize:12, color:'var(--subtext)'}}>If you saw a full-canvas checkerboard before, this build fixes transparency-aware dithering and outline.</div>
+        <div style={{fontSize:12, color:'var(--subtext)'}}>Palette Editor allows custom color sets. Micro-jitter adds subtle variation before quantization.</div>
       </div>
+
+      {/* Palette Editor Modal */}
+      <PaletteEditor
+        isOpen={ui.showPaletteEditor}
+        onClose={() => useUI.setState({ showPaletteEditor: false, editingPalette: undefined })}
+        onSave={handleSavePalette}
+        initialPalette={ui.editingPalette ? availablePalettes[ui.editingPalette] : undefined}
+      />
     </div>
   )
 }
