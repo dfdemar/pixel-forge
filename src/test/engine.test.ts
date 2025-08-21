@@ -1,8 +1,8 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
-import { runModule } from '@engine/index'
-import { getModuleById } from '@engine/registry'
-import { globalSimilarityGuard } from '@engine/similarityGuard'
-import type { SpriteModule } from '@engine/types'
+import { runModule } from '../engine/index'
+import { getModuleById } from '../engine/registry'
+import { globalSimilarityGuard } from '../engine/similarityGuard'
+import type { SpriteModule } from '../engine/types'
 
 describe('Engine Integration', () => {
   let mockModule: SpriteModule

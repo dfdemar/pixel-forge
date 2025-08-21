@@ -76,7 +76,15 @@ export function exportCustomPalettes(): string {
  */
 export function importCustomPalettes(jsonString: string): boolean {
   try {
-    const imported = JSON.parse(jsonString);
+    // Handle invalid JSON format
+    let imported;
+    try {
+      imported = JSON.parse(jsonString);
+    } catch (err) {
+      console.error('Error importing palettes:', err);
+      return false;
+    }
+    
     let importedCount = 0;
 
     for (const [id, palette] of Object.entries(imported)) {
