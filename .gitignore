@@ -111,3 +111,5 @@ sprite-exports/
 *.backup
 *.zip
 *.tar.gz
+
+CLAUDE.md
