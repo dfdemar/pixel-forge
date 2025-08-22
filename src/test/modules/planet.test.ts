@@ -27,12 +27,12 @@ describe('PlanetModule', () => {
   describe('Module Structure', () => {
     it('should have correct module metadata', () => {
       expect(PlanetModule.id).toBe('planet')
-      expect(PlanetModule.version).toBe('0.3.0')
+      expect(PlanetModule.version).toBe('0.4.0')
     })
 
     it('should provide valid archetypes', () => {
       const archetypes = PlanetModule.archetypes()
-      expect(archetypes).toHaveLength(5)
+      expect(archetypes).toHaveLength(7)
 
       const archetypeIds = archetypes.map(a => a.id)
       expect(archetypeIds).toContain('lush')
@@ -40,6 +40,8 @@ describe('PlanetModule', () => {
       expect(archetypeIds).toContain('ice')
       expect(archetypeIds).toContain('gas')
       expect(archetypeIds).toContain('volcanic')
+      expect(archetypeIds).toContain('barren')
+      expect(archetypeIds).toContain('crystalline')
 
       // Check that volcanic archetype has correct params
       const volcanic = archetypes.find(a => a.id === 'volcanic')
@@ -262,8 +264,8 @@ describe('PlanetModule', () => {
       PlanetModule.finalize?.(ctx, params)
 
       if (ctx.retro.microJitter) {
-        expect(ctx.retro.microJitterStrength).toBeGreaterThan(originalStrength)
-        expect(ctx.retro.microJitterStrength).toBeLessThanOrEqual(0.25)
+        expect(ctx.retro.microJitterStrength ?? 0).toBeGreaterThan(originalStrength ?? 0)
+        expect(ctx.retro.microJitterStrength ?? 0).toBeLessThanOrEqual(0.25)
       }
     })
 

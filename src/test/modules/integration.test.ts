@@ -34,7 +34,7 @@ describe('Updated Modules Integration', () => {
 
     it('should all have updated version numbers', () => {
       modules.forEach(({ module, name }) => {
-        expect(module.version).toBe('0.3.0')
+        expect(module.version).toBe('0.4.0')
       })
     })
 
@@ -86,7 +86,7 @@ describe('Updated Modules Integration', () => {
 
       const originalStrength = planetCtx.retro.microJitterStrength
       PlanetModule.finalize?.(planetCtx, { volcanic: true })
-      expect(planetCtx.retro.microJitterStrength).toBeGreaterThan(originalStrength)
+      expect(planetCtx.retro.microJitterStrength ?? 0).toBeGreaterThan(originalStrength ?? 0)
 
       // Test Tile metallic enhancement
       const tileCtx: EngineContext = {
@@ -105,7 +105,7 @@ describe('Updated Modules Integration', () => {
 
       const originalTileStrength = tileCtx.retro.microJitterStrength
       TerrainTileModule.finalize?.(tileCtx, { metallic: true })
-      expect(tileCtx.retro.microJitterStrength).toBeGreaterThan(originalTileStrength)
+      expect(tileCtx.retro.microJitterStrength ?? 0).toBeGreaterThan(originalTileStrength ?? 0)
 
       // Test Icon precious enhancement
       const iconCtx: EngineContext = {
@@ -124,7 +124,7 @@ describe('Updated Modules Integration', () => {
 
       const originalIconStrength = iconCtx.retro.microJitterStrength
       IconModule.finalize?.(iconCtx, { style: 'precious' })
-      expect(iconCtx.retro.microJitterStrength).toBeGreaterThan(originalIconStrength)
+      expect(iconCtx.retro.microJitterStrength ?? 0).toBeGreaterThan(originalIconStrength ?? 0)
     })
 
     it('should respect micro-jitter strength limits', () => {
@@ -159,21 +159,21 @@ describe('Updated Modules Integration', () => {
 
   describe('Enhanced Archetypes', () => {
     it('should provide more diverse archetypes than previous versions', () => {
-      // Planet should have 5 archetypes including volcanic
+      // Planet should have 7 archetypes including volcanic and crystalline
       const planetArchetypes = PlanetModule.archetypes()
-      expect(planetArchetypes).toHaveLength(5)
+      expect(planetArchetypes).toHaveLength(7)
       expect(planetArchetypes.some(a => a.id === 'volcanic')).toBe(true)
 
-      // Tile should have 5 archetypes including metal, sand, water
+      // Tile should have 9 archetypes including metal, sand, water, crystal, tech
       const tileArchetypes = TerrainTileModule.archetypes()
-      expect(tileArchetypes).toHaveLength(5)
+      expect(tileArchetypes).toHaveLength(9)
       expect(tileArchetypes.some(a => a.id === 'metal')).toBe(true)
       expect(tileArchetypes.some(a => a.id === 'sand')).toBe(true)
       expect(tileArchetypes.some(a => a.id === 'water')).toBe(true)
 
-      // Icon should have 6 archetypes including gem, sword, potion
+      // Icon should have 10 archetypes including gem, sword, potion, orb, rune
       const iconArchetypes = IconModule.archetypes()
-      expect(iconArchetypes).toHaveLength(6)
+      expect(iconArchetypes).toHaveLength(10)
       expect(iconArchetypes.some(a => a.id === 'gem')).toBe(true)
       expect(iconArchetypes.some(a => a.id === 'sword')).toBe(true)
       expect(iconArchetypes.some(a => a.id === 'potion')).toBe(true)

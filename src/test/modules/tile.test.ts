@@ -27,12 +27,12 @@ describe('TerrainTileModule', () => {
   describe('Module Structure', () => {
     it('should have correct module metadata', () => {
       expect(TerrainTileModule.id).toBe('tile')
-      expect(TerrainTileModule.version).toBe('0.3.0')
+      expect(TerrainTileModule.version).toBe('0.4.0')
     })
 
     it('should provide valid archetypes', () => {
       const archetypes = TerrainTileModule.archetypes()
-      expect(archetypes).toHaveLength(5)
+      expect(archetypes).toHaveLength(9)
 
       const archetypeIds = archetypes.map(a => a.id)
       expect(archetypeIds).toContain('grass')
@@ -40,6 +40,10 @@ describe('TerrainTileModule', () => {
       expect(archetypeIds).toContain('metal')
       expect(archetypeIds).toContain('sand')
       expect(archetypeIds).toContain('water')
+      expect(archetypeIds).toContain('stone')
+      expect(archetypeIds).toContain('lava')
+      expect(archetypeIds).toContain('crystal')
+      expect(archetypeIds).toContain('tech')
 
       // Check material-specific parameters
       const metal = archetypes.find(a => a.id === 'metal')
@@ -308,8 +312,8 @@ describe('TerrainTileModule', () => {
       TerrainTileModule.finalize?.(ctx, params)
 
       if (ctx.retro.microJitter) {
-        expect(ctx.retro.microJitterStrength).toBeGreaterThan(originalStrength)
-        expect(ctx.retro.microJitterStrength).toBeLessThanOrEqual(0.3)
+        expect(ctx.retro.microJitterStrength ?? 0).toBeGreaterThan(originalStrength ?? 0)
+        expect(ctx.retro.microJitterStrength ?? 0).toBeLessThanOrEqual(0.3)
       }
     })
 
@@ -320,8 +324,8 @@ describe('TerrainTileModule', () => {
       TerrainTileModule.finalize?.(ctx, params)
 
       if (ctx.retro.microJitter) {
-        expect(ctx.retro.microJitterStrength).toBeGreaterThan(originalStrength)
-        expect(ctx.retro.microJitterStrength).toBeLessThanOrEqual(0.2)
+        expect(ctx.retro.microJitterStrength ?? 0).toBeGreaterThan(originalStrength ?? 0)
+        expect(ctx.retro.microJitterStrength ?? 0).toBeLessThanOrEqual(0.2)
       }
     })
 
